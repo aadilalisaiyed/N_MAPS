@@ -1,0 +1,31 @@
+PRESENT Cipher: Core Algorithm Logic:
+This document explains the internal mathematical structure of the PRESENT block cipher implemented in Project SENTINEL-VAULT.
+PRESENT is a Substitution-Permutation Network (SPN) consisting of 31 rounds.
+
+AddRoundKey (XOR Layer)
+The first step of each round is the AddRoundKey operation.
+Process: The 64-bit internal state (the data being encrypted) is XORed bitwise with the 64-bit Round Key ($K_i$).
+Logic: $State =(State XOR K_i)
+Security Function: This introduces the secret key into the encryption process,
+ensuring that the output depends entirely on the unique hardware key stored in the FPGA.
+
+sBoxLayer (Confusion Layer):
+After the XOR operation,
+the state is passed through the S-Box layer to provide "Confusion."
+Process: The 64-bit state is divided into 16 blocks of 4 bits each.
+Each 4-bit block is replaced by another 4-bit value according to a fixed non-linear substitution table.
+
+The S-Box Table (Hexadecimal): | Input | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | A | B | C | D | E | F |  
+Output | C | 5 | 6 | B | 9 | 0 | A | D | 3 | E | F | 8 | 4 | 7 | 1 | 2 |.
+Security Function: This makes the relationship between the plaintext and ciphertext non-linear, making "Linear Cryptanalysis" extremely difficult for attackers.
+pLayer (Diffusion Layer)
+
+The final step of the round is the pLayer, which provides "Diffusion.
+"Process: This is a bit-permutation layer where the 64 bits of the state are rearranged to new positions.
+The Mapping: Bit $i$ of the state is moved to bit position $P(i)$.
+For example:
+Bit 0 moves to Bit 0
+Bit 1 moves to Bit 16
+Bit 2 moves to Bit 32
+Bit 3 moves to Bit 48
+Security Function: Diffusion ensures that if you change even 1 bit of the input, the change spreads rapidly across all 64 bits within a few rounds (the Avalanche Effect).
