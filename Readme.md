@@ -1,113 +1,160 @@
 # 🛡️ RescueVault: Secure. Search. Save.
 
-RescueVault is a robust, offline-capable disaster response communication system designed to aid rescue operations in areas with **zero cellular connectivity**.  
-It uses **Long-Range WiFi (HTTP Pull Architecture)** and **GPS** to create a decentralized network for victims to send SOS signals directly to a command center.
+RescueVault is a decentralized, offline-capable disaster response communication system designed to provide a **critical communication link in areas with zero cellular connectivity**.  
+It utilizes a **Pull Architecture over Long-Range WiFi**, **hardware-level encryption**, **machine learning**, and **GPS integration** to enable secure, resilient emergency communication without relying on any existing network infrastructure.
+
+---
+
+## 📌 Project Summary
+
+RescueVault enables reliable emergency coordination in disaster-stricken environments where traditional networks collapse. Victims submit SOS reports through a locally hosted tactical hotspot, which are securely encrypted, geotagged, analyzed using machine learning, and delivered to responders via role-specific dashboards for faster, smarter decision-making.
 
 ---
 
 ## 🚀 Features
 
 - **Offline SOS Hotspot**  
-  Victims connect to a WiFi network (`SENTINEL_RESCUE_SOS`) hosted by the Edge Node to submit their status.
+  Victims connect to a WiFi network (`SENTINEL_RESCUE_SOS`) hosted by the Edge Node to submit emergency reports.
 
-- **Tactical Dashboard**  
-  Dark-mode, high-contrast HTML interface optimized for low-power devices.
-
-- **GPS Tracking**  
-  Automatically appends precise GPS coordinates to every victim report.
+- **Automated GPS Geotagging**  
+  Every report is automatically appended with precise GPS coordinates from the NEO-6M module.
 
 - **Hardware-Accelerated Encryption**  
-  Uses a **Shrike-lite (RP2040 + FPGA)** board implementing **SIMON / ASCON** ciphers for secure transmission.
+  Secure transmission using a **Shrike-lite (RP2040 + FPGA)** board implementing **SIMON / ASCON** cryptographic cores.
+
+- **Machine Learning–Assisted Analysis**  
+  Incoming victim data is processed using ML models to assist in **priority classification**, **severity estimation**, and **resource allocation support**.
+
+- **Role-Based Tactical Dashboards**  
+  Separate dashboards are provided for **commanders**, **medical teams**, and **field responders**, each showing tailored views of relevant data.
 
 - **Live Command Center**  
-  Windows-based Python bridge visualizes victim data in real time by monitoring local JSON updates.
+  A Python-based bridge visualizes real-time data through dynamic web dashboards.
 
 ---
 
-## 🛠️ Hardware Architecture
+## 🧠 Novelty and Key Innovations
 
-RescueVault is built on a **modular three-part architecture**.
+RescueVault introduces a **multi-layered innovation stack** combining resilient networking, hardware security, machine learning, and operational visualization.
+
+### 🔐 Hardware–Software Co-Design for Security
+Unlike conventional IoT disaster systems that rely purely on software encryption, RescueVault integrates a **Shrike-lite (RP2040 + FPGA)** board.  
+Hardware-accelerated **SIMON / ASCON ciphers** ensure that sensitive victim data is encrypted **before it ever leaves the device**, significantly reducing attack surfaces.
+
+### 📡 Resilient Pull Architecture
+RescueVault uses a **Pull-based communication model**, where the Command Center actively fetches data from the field node.  
+This approach:
+- Avoids unreliable continuous uplinks  
+- Performs better in noisy RF environments  
+- Ensures data consistency even under intermittent connectivity
+
+### 🤖 Machine Learning–Enhanced Decision Support
+RescueVault incorporates **machine learning models** to assist responders by:
+- Classifying SOS messages by **urgency and severity**
+- Flagging high-risk cases (e.g., medical emergencies, immobility indicators)
+- Supporting intelligent triage and dispatch prioritization
+
+ML operates **locally** within the command environment, preserving offline capability and data privacy.
+
+### 🌐 Zero-Infrastructure Dependency
+The entire system functions without:
+- Cellular networks
+- Internet connectivity
+- Cloud services
+
+From the victim’s smartphone to encrypted hardware transmission, ML analysis, and responder dashboards, RescueVault operates as a **self-contained tactical ecosystem**.
+
+### 📍 Automated Geolocation Integration
+GPS data from the **NEO-6M module** is automatically fused with victim-submitted information, ensuring responders receive **accurate and actionable location intelligence** even when victims are disoriented or unable to communicate clearly.
+
+### 🧭 Role-Based Situational Awareness
+Instead of a single monolithic dashboard, RescueVault provides **dedicated dashboards** for different operational teams:
+- **Command Dashboard:** System-wide overview, priority alerts, resource coordination
+- **Medical Dashboard:** Victim condition, triage status, medical urgency
+- **Field Responder Dashboard:** Location-centric views and assignment details
+
+This separation reduces cognitive overload and improves response efficiency.
+
+---
+
+## 🛠️ Core Architecture
 
 ### 1. Edge Node (Field Unit)
 
-- **Microcontroller:** Arduino Mega 2560 (Central Hub)
-- **Communication:** ESP8266 (NodeMCU) – hosts web interface
+- **Microcontroller:** Arduino Mega 2560
+- **Communication:** ESP8266 (NodeMCU)
 - **Positioning:** NEO-6M GPS Module
-- **Security:** Shrike-lite FPGA (SIMON cipher acceleration)
-- **Role:**  
-  Collects GPS + encrypted victim data and stores reports in a local `victims.json` file.
+- **Security:** Shrike-lite (RP2040 + FPGA)
+- **Function:**  
+  Hosts the tactical hotspot (`SENTINEL_RESCUE_SOS`) and stores encrypted victim reports in `victims.json`.
 
 ---
 
 ### 2. Gateway Node (Command Center)
 
 - **Microcontroller:** ESP32 or ESP8266
-- **Connectivity:** USB Serial → Laptop
-- **Role:**  
-  Wirelessly connects to the Edge Node and **pulls** data into the command system.
+- **Connectivity:** USB Serial → Windows Laptop
+- **Function:**  
+  Actively pulls encrypted data from the Edge Node for processing.
+
+---
+
+### 3. Command & ML Layer
+
+- **Backend:** Python bridge (`pyserial`)
+- **ML Processing:** Local inference for prioritization and classification
+- **Frontend:** Multiple role-specific web dashboards
+- **Function:**  
+  Converts raw SOS data into actionable intelligence.
 
 ---
 
 ## 🔌 Pin Connections
 
-### Arduino Mega ↔ ESP8266 (Edge Node)
+### Arduino Mega ↔ ESP8266
 
 | Mega Pin | ESP8266 Pin | Notes |
 |--------|-------------|------|
-| TX1 (18) | D7 (GPIO 13) | ⚠️ Requires voltage divider (1kΩ / 2kΩ) |
-| RX1 (19) | D6 (GPIO 12) | Direct connection |
-| 5V / GND | VIN / GND | Common power and ground |
+| TX1 (18) | D7 (GPIO 13) | ⚠️ Voltage divider required |
+| RX1 (19) | D6 (GPIO 12) | Direct |
+| 5V / GND | VIN / GND | Common power |
 
 ---
 
 ### Arduino Mega ↔ Shrike-lite (FPGA)
 
-| Mega Pin | FPGA / RP2040 Pin | Notes |
-|--------|------------------|------|
+| Mega Pin | FPGA / RP2040 | Notes |
+|--------|---------------|------|
 | SCK (52) | SCK | SPI clock |
-| MOSI (51) | TX / MOSI | Data to cipher |
-| MISO (50) | RX / MISO | Ciphertext output |
+| MOSI (51) | MOSI | Plaintext |
+| MISO (50) | MISO | Ciphertext |
 | CS (53) | CS | Chip select |
 
 ---
 
 ### Arduino Mega ↔ GPS Module
 
-| GPS Pin | Mega Pin | Notes |
-|-------|----------|------|
-| TX | RX2 (17) | Serial data |
-| RX | TX2 (16) | Command data |
-| VCC / GND | 5V / GND | Power supply |
+| GPS Pin | Mega Pin |
+|-------|----------|
+| TX | RX2 (17) |
+| RX | TX2 (16) |
+| VCC / GND | 5V / GND |
 
 ---
 
 ## 💻 Software Setup
 
-### 1. Edge Node (ESP8266)
-
+### Edge Node
 - **Code:** `Edge_Node_ESP/src/main.cpp`
-- **Upload:** Flash to NodeMCU connected to the Arduino Mega
-- **Function:**  
-  Hosts SOS webpage and API endpoint:
-  
----
+- **Endpoint:** `/api/victims`
 
-### 2. FPGA Encryption (Verilog)
+### FPGA Encryption
+- **Language:** Verilog
+- **Ciphers:** SIMON / ASCON
+- **SPI Bridge:** RP2040
 
-- **Implementation:** SIMON / ASCON cipher cores on FPGA fabric
-- **Bridge:** RP2040 handles SPI communication between Arduino Mega and FPGA
-
----
-
-### 3. Command Dashboard (Python)
-
-- **Requirement:** Python 3.x, `pyserial`
+### Command Dashboard & ML
+- **Requirements:** Python 3.x, `pyserial`, ML dependencies
 - **Run:**
 ```bash
 python esp_bridge.py
-
-If you want, I can also:
-- Split this into multiple `.md` files (hardware, software, crypto)
-- Add architecture diagrams (Mermaid)
-- Turn this into a GitHub-polished README with badges and TOC
-
