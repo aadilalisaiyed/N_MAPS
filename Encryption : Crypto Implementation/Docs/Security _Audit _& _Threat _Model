@@ -1,0 +1,21 @@
+Security _Audit _& _Threat _Model:
+This document provides a comprehensive security analysis of Project SENTINEL-VAULT. We have implemented a Defense-in-Depth strategy to ensure data confidentiality even under physical or electronic compromise.
+
+1. Physical Security: The "Kill Switch"
+Threat: The Sentinel box is captured by the enemy, and they attempt to open it to access the hardware or dump the memory.
+Countermeasure: Anti-Tamper Loop.
+Mechanism: A physical continuous wire loop is integrated into the enclosure's lid. If the lid is forced open, the circuit breaks, triggering an interrupt in the FPGA.
+Action: The FPGA immediately executes a Volatile Key Erasure. The internal master key (stored in flip-flops) is wiped, making the stored encrypted data permanently unreadable.
+2. CryptographiSecurity Audit & Threat Modelc Security: PRESENT-80
+Threat: Brute-force attacks or Differential Cryptanalysis.
+Analysis: We utilize the PRESENT Cipher, which is resistant against Linear and Differential attacks.
+Hardware Isolation: The encryption keys reside exclusively within the FPGA logic. The ESP8266 (Software Layer) never has access to the keys.
+Benefit: Even if the ESP8266 firmware is hacked via a software vulnerability, the attacker cannot steal the encryption keys because they are physically isolated in the FPGA hardware.
+3. Storage Security: Zero-Plaintext Policy
+Threat: Data theft by dumping the Flash Memory (SPIFFS).
+Mechanism: The ESP8266 acts as a transparent bridge. As soon as plaintext is received from the victim, it is sent to the FPGA and then overwritten in the ESP8266’s RAM with zeros.
+Result: Only High-Entropy Ciphertext is stored in the non-volatile memory. Without the hardware-locked key, the stored logs appear as random noise ($Entropy \approx 8$ bits/byte).
+4. Electronic Warfare (EW) Resilience
+Threat: Signal jamming or tracking the device via its Wi-Fi signal.
+Feature 1: Stealth Mode. The ESP8266 monitors the Signal-to-Noise Ratio (SNR). If a high level of interference (Jamming) is detected, the device enters Silent Mode—disabling Wi-Fi to prevent location tracking via Triangulation.
+Feature 2: MAC Randomization. The device changes its MAC address at set intervals to avoid being fingerprinted by enemy electronic surveillance systems.
