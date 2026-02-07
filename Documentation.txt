@@ -1,0 +1,79 @@
+Sentinel's Vault 🛡️📡
+A Secure, Decentralized Communication Node for Disaster Response
+
+Hackathon Project: IIT Gandhinagar Hackathon 2026 Track: Disaster Management / Defense Technology
+
+📖 Overview
+Sentinel's Vault is a resilient, offline communication ecosystem designed for disaster-stricken areas where traditional cellular and internet infrastructure has failed.
+
+By leveraging a decentralized ESP32 Mesh Network, this system creates a self-healing grid that allows victims and rescue teams to exchange critical information (location, status, resource needs). Unlike standard mesh networks, Sentinel's Vault integrates hardware-level encryption to ensure that sensitive data remains secure, preventing unauthorized interception during critical operations.
+
+🚀 Key Features
+🚫 Infrastructure-Independent: Operates completely offline without Internet, GSM, or Satellite connectivity.
+
+🕸️ Self-Healing Mesh Network: Nodes (ESP32) automatically reroute data if a path fails, ensuring high availability in chaotic environments.
+
+🔒 Hardware-Level Security: Implements robust encryption directly on the hardware to secure messages against spoofing and interception.
+
+📍 Real-Time Telemetry: Transmits GPS coordinates and status updates from "victim nodes" to "rescue command centers."
+
+🔋 Low Power Consumption: Optimized for long-term deployment on battery/solar power in remote locations.
+
+🛠️ Tech Stack
+Hardware
+Microcontroller: ESP32 (WROOM/WROVER modules)
+
+Communication Protocol: ESP-NOW / WiFi Mesh
+
+Sensors: GPS Modules (NEO-6M), Environment Sensors (optional)
+
+Power: Li-Ion Battery Packs
+
+Software & Firmware
+Language: C++ / Embedded C
+
+Framework: ESP-IDF / Arduino
+
+Encryption Standard: AES-128/256 (Hardware Accelerated) / ASCON (Lightweight)
+
+Dashboard: Python (using Flask/Streamlit for the Command Center visualization)
+
+⚙️ Architecture
+Node A (Victim/Field Unit): Broadcasts encrypted distress signal containing UUID and GPS data.
+
+The Mesh: Intermediate nodes relay the packet via the most efficient path using the mesh routing algorithm.
+
+Node B (Command Center/Gateway): Receives the encrypted packet, decrypts it using the hardware key, and logs the data to the central dashboard.
+
+📦 Installation & Setup
+Prerequisites
+VS Code with PlatformIO extension (or Arduino IDE)
+
+CP210x USB Drivers
+
+Flashing the Firmware
+Clone the Repository:
+
+Bash
+git clone https://github.com/your-username/sentinels-vault.git
+cd sentinels-vault
+Configure Credentials:
+
+Rename include/secrets_example.h to include/secrets.h.
+
+Add your pre-shared encryption keys.
+
+Build and Upload:
+
+Connect your ESP32 board.
+
+Select the correct board environment in platformio.ini.
+
+Run: pio run --target upload
+
+🔮 Future Roadmap
+Integration of LoRaWAN for long-range backhaul connectivity.
+
+AI-based prioritization of distress signals (triage mode).
+
+Mobile App interface for easier user interaction via Bluetooth.
