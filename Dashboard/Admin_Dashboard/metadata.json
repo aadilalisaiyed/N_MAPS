@@ -1,0 +1,9 @@
+
+{
+  "name": "SENTINEL-VAULT Admin Console",
+  "description": "A high-security emergency response command center for disaster response, rescue teams, and health departments.",
+  "requestFramePermissions": [
+    "geolocation",
+    "camera"
+  ]
+}
