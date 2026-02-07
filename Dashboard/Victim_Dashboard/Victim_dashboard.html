@@ -1,1 +1,65 @@
 
+<!DOCTYPE html>
+<html>
+<head>
+    <title>SENTINEL-VAULT</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body { background-color: #1a1a1a; color: #e0e0e0; font-family: courier, sans-serif; text-align: center; padding: 20px; }
+        .container { max-width: 400px; margin: auto; border: 2px solid #444; padding: 20px; border-radius: 10px; }
+        h2 { color: #ff4444; letter-spacing: 2px; }
+        input, select, button { width: 100%; padding: 12px; margin: 8px 0; border: none; border-radius: 4px; }
+        button { background-color: #cc0000; color: white; font-weight: bold; cursor: pointer; font-size: 16px; }
+        button:hover { background-color: #ff0000; }
+        .status { margin-top: 15px; font-size: 14px; color: #888; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>⚠ SENTINEL VAULT ⚠</h2>
+        <p>OFF-GRID EMERGENCY NODE</p>
+        
+        <form id="sosForm">
+            <input type="text" id="name" placeholder="FULL NAME" required>
+            <input type="number" id="age" placeholder="AGE" required>
+            <select id="triage">
+                <option value="Green">Stable / Safe</option>
+                <option value="Yellow">Injured (Mobile)</option>
+                <option value="Red">CRITICAL / IMMOBILE</option>
+            </select>
+            <button type="submit">TRANSMIT SOS</button>
+        </form>
+        <p class="status" id="msg">Status: WAITING FOR INPUT...</p>
+    </div>
+
+    <script>
+        document.getElementById('sosForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            var statusMsg = document.getElementById('msg');
+            statusMsg.innerText = "Status: ENCRYPTING & SAVING...";
+            
+            var payload = {
+                name: document.getElementById('name').value,
+                age: document.getElementById('age').value,
+                triage: document.getElementById('triage').value
+            };
+
+            fetch('/save', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(payload)
+            })
+            .then(res => {
+                if(res.ok) {
+                    statusMsg.innerText = "Status: DATA SECURED. STAY PUT.";
+                    statusMsg.style.color = "#00ff00";
+                    document.getElementById('sosForm').reset();
+                } else {
+                    statusMsg.innerText = "Status: ERROR. TRY AGAIN.";
+                }
+            })
+            .catch(err => statusMsg.innerText = "Status: CONNECTION FAILED");
+        });
+    </script>
+</body>
+</html>
