@@ -1,0 +1,29 @@
+# ---------------- Python ----------------
+__pycache__/
+*.pyc
+*.pyo
+.env
+venv/
+
+# ---------------- ML artifacts ----------------
+ml/saved_model/
+*.safetensors
+*.pt
+*.bin
+*.onnx
+*.ckpt
+*.h5
+
+# ---------------- Data ----------------
+*.csv
+*.tsv
+data/
+datasets/
+
+# ---------------- Node ----------------
+node_modules/
+npm-debug.log*
+
+# ---------------- OS ----------------
+.DS_Store
+Thumbs.db
